@@ -110,15 +110,10 @@ public:
 #endif
 
 protected:
-
   /** draws the title bar. */
   virtual void drawTitleBar();
 
 };
-
-
-
-
 
 #endif
 

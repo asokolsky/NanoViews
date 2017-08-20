@@ -12,8 +12,6 @@ View *View::g_pActiveView = 0;
 View *View::g_pPreviousView = 0;
 unsigned long View::m_ulToUpdate = 0;
 
-
-
 const int16_t iTitleBarHeight = 30; // 27;
 
 /**
@@ -192,7 +190,6 @@ bool View::onKeysInactive()
   DEBUG_PRINTLN("View::onKeysInactive() => true");
   return true;
 }
-
 
 #ifdef DEBUG
 void View::DUMP(const char *szText /*= 0*/) const

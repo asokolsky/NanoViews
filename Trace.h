@@ -17,8 +17,10 @@
   #define DEBUG_PRINTLN(x)  Serial.println(F(x))
 #else
   #define DEBUG_PRINT(x)
+  #define DEBUG_PRNT(x)
   #define DEBUG_PRINTDEC(x)
   #define DEBUG_PRINTHEX(x)
+  #define DEBUG_PRNTLN(x)
   #define DEBUG_PRINTLN(x)
 #endif 
 

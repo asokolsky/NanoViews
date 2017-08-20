@@ -61,13 +61,13 @@ public:
 /**
  * Extension of U8G2
  */
-class Display: public U8G2_SH1106_128X64_NONAME_F_HW_I2C // U8G2_SSD1306_128X64_NONAME_F_HW_I2C 
-// SH1106 has an internal RAM of 132x64
-// SSD1306 only has 128x64
+class Display: public 
+  U8G2_SH1106_128X64_NONAME_1_HW_I2C     //  has an internal RAM of 132x64
+  //U8G2_SH1106_128X64_NONAME_F_HW_I2C     //  has an internal RAM of 132x64
+  // U8G2_SSD1306_128X64_NONAME_F_HW_I2C // SSD1306 only has 128x64
 {
   /* backlight intensity 0..10 */
   //byte m_bl = 9;
-  
 public: 
   const static uint8_t COLOR_BLACK    = 0;
   const static uint8_t COLOR_WHITE    = 1;
