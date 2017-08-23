@@ -49,25 +49,6 @@ Display g_display;
  * Class Implementation
  */
 
-Display::Display() : 
-  U8G2_SH1106_128X64_NONAME_1_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE)
-  //U8G2_SH1106_128X64_NONAME_F_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE)
-  //U8G2_SSD1306_128X64_NONAME_F_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE)
-{
-  
-}
-
-/**
- * Called once to set things up.
- */
-void Display::setup()
-{
-  begin();
-  //fillScreen(ILI9341_BLACK);
-  //setRotation(uDisplayOrientation); // for PCB v0.9 and later
-  //setTextWrap(false);
-}
-
 /*void Display::drawButton(const RECT rButton, const ILI9341_t3_font_t *pFont, const char *szLabel, bool bEraseBkgnd)
 { 
   RECT rLoc = rButton;

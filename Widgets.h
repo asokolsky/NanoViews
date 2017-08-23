@@ -19,7 +19,7 @@ const uint16_t WS_HASFOCUS  =0x1000;
 class Widget
 {
 protected:
-  uint16_t m_uStyle;
+  uint16_t m_uStyle = 0;
 
 public:
   /** this is position of the widget */
@@ -81,9 +81,32 @@ public:
 #else
   void DUMP(const char *szText = 0) {}
 #endif
-
 };
 
+/**
+ * Static Text Widget with no scroll
+ */
+class TextWidget : public Widget
+{
+  char m_text[40];
+public:
+
+  TextWidget(const uint8_t *pFont = 0) : 
+    Widget(pFont) 
+  {
+    m_uStyle |= WS_CHILD;
+    m_text[0] = '\0';
+  }
+
+  void setText(const char *msg) 
+  {
+    strncpy(m_text, m_text, sizeof(m_text));
+    m_text[sizeof(m_text) - 1] = '\0';
+  }
+  
+  /** Text is painted centered */
+  void draw();
+};
 
 #endif // Widgets_h
 

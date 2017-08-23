@@ -39,11 +39,14 @@ protected:
   
   const static uint8_t MAXKIDS = 4;
   
-  Widget *m_zChildren[MAXKIDS];
+  Widget *m_zChildren[2];
 
-  bool addChild(Widget *pChild) {
-    for(uint8_t i = 0; i < MAXKIDS; i++) {
-      if(m_zChildren[i] == 0) {
+  bool addChild(Widget *pChild) 
+  {
+    for(uint8_t i = 0; i < (sizeof(m_zChildren)/sizeof(m_zChildren[0])); i++) 
+    {
+      if(m_zChildren[i] == 0) 
+      {
         m_zChildren[i] = pChild;
         return true;
       }

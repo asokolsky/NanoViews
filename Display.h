@@ -75,7 +75,12 @@ public:
   const static uint8_t COLOR_RED      = 3;
   const static uint8_t COLOR_CYAN     = 4;
   
-  Display();
+  Display() : U8G2_SH1106_128X64_NONAME_1_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE)
+    //U8G2_SH1106_128X64_NONAME_F_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE)
+    //U8G2_SSD1306_128X64_NONAME_F_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE)
+    {
+      
+    }  
 
   /*void setClipRect(const RECT r) {
     _clipx1 = r.left; _clipy1 = r.top; _clipx2 = r.right; _clipy2 = r.bottom;
@@ -125,13 +130,22 @@ public:
     drawBox(r.left, r.top, r.width(), r.height());
     if(color != oldColor)
       setDrawColor(oldColor);
-}
+  }
 
   /*const ILI9341_t3_font_t *getFont() const {
     return font;
   }*/
-
-  void setup();
+  
+  /**
+  * Called once to set things up.
+  */
+  void setup()
+  {
+    begin();
+    //fillScreen(ILI9341_BLACK);
+    //setRotation(uDisplayOrientation); // for PCB v0.9 and later
+    //setTextWrap(false);
+  }
 
   //const int16_t iButtonCornerRadius = 4;
   //const uint16_t uButtonBorderColor = ILI9341_DARKGREY;

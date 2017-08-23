@@ -100,12 +100,16 @@ void Widget::printKeyVal(
 /**
  *  TextWidget Class Implementation
  */
-/*void TextWidget::draw()
+void TextWidget::draw()
 {
-  DEBUG_PRINT("TextWidget::draw: "); DEBUG_PRINTLN(m_strText.c_str());
+  DEBUG_PRINT("TextWidget::draw: '"); DEBUG_PRNT(m_text); DEBUG_PRINTLN("'");
   m_position.DUMP("TextWidget m_position: ");
   m_rectClient.DUMP("TextWidget m_rectClient: ");
 
-  printTextCenter(m_strText.c_str(), 0, m_pFont, 0);
-}*/
+  g_display.printText(
+    m_text, Display::COLOR_WHITE, Display::COLOR_BLACK, 
+    m_rectClient, Display::haCenter, Display::vaCenter);
+  
+}
+
 

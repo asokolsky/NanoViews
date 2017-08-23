@@ -114,28 +114,34 @@ void View::onPosition()
 void View::update(unsigned long now)
 {
   //DUMP("View::update()");
-  if(m_bEraseBkgnd)
-  {
-    RECT rFill = m_position;
-    //rFill.bottom -= iBottomBarHeight;
-    g_display.fillRect(rFill, 0); //, ILI9341_OLIVE);
-  }
-  drawTitleBar();
-  m_bEraseBkgnd = false;
-  //
-  // try to protect non-client area  
-  // 
-  //g_display.setClipRect(m_rectClient);
-  
-  //
-  // set defaults for use in the client area
-  //
-  //g_display.setFont(LiberationSans_16);  
-  //g_display.setTextSize(1);
-  //g_display.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
-  //g_display.setCursor(m_rectClient.left, m_rectClient.top);
-  
-  updateClient(now);
+
+  g_display.firstPage();
+  do 
+  {  
+    if(m_bEraseBkgnd)
+    {
+      RECT rFill = m_position;
+      //rFill.bottom -= iBottomBarHeight;
+      g_display.fillRect(rFill, 0); //, ILI9341_OLIVE);
+    }
+    drawTitleBar();
+    m_bEraseBkgnd = false;
+    //
+    // try to protect non-client area  
+    // 
+    //g_display.setClipRect(m_rectClient);
+    
+    //
+    // set defaults for use in the client area
+    //
+    //g_display.setFont(LiberationSans_16);  
+    //g_display.setTextSize(1);
+    //g_display.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
+    //g_display.setCursor(m_rectClient.left, m_rectClient.top);
+    
+    updateClient(now);
+
+  } while (g_display.nextPage());
   //
   m_ulToUpdate = now + ulUpdatePeriod;
 }

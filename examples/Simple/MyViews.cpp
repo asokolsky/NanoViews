@@ -23,9 +23,15 @@ bool ViewLed::onKeyUp(uint8_t vk)
       return false;
   }
   if(m_bLedOn)
+  {
     g_led.turnOn();
+    m_tw.setText("LED is ON");
+  }
   else
+  {
     g_led.turnOff();
+    m_tw.setText("LED is OFF");
+  }
   return true;
 }
 
