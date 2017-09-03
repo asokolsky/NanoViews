@@ -39,4 +39,5 @@ bool ViewLed::onKeyUp(uint8_t vk)
  * ViewAbout implementation
  */
 
- ViewAbout g_viewAbout;
+ViewAbout g_viewAbout;
+

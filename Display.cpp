@@ -40,15 +40,23 @@ void RECT::DUMP(const char *szText /* = 0*/) const
   DEBUG_PRINTLN("");  
 }
 #endif
-/**
- *  Globals
- */
-Display g_display;
 
 /**
  * Class Implementation
  */
+/**
+ *  Display initialization
+ */
+ void Display::setup()
+ {
+   begin();
+   //fillScreen(ILI9341_BLACK);
+   //setRotation(uDisplayOrientation); // for PCB v0.9 and later
+   //setTextWrap(false);
 
+   DUMP("Display::setup()");
+ }
+ 
 /*void Display::drawButton(const RECT rButton, const ILI9341_t3_font_t *pFont, const char *szLabel, bool bEraseBkgnd)
 { 
   RECT rLoc = rButton;
@@ -76,10 +84,10 @@ void Display::printText(
   //DEBUG_PRINT("Display::printText('"); DEBUG_PRINT(szText); DEBUG_PRINT("' ha="); DEBUG_PRINTDEC((int)ha); DEBUG_PRINT(" va="); DEBUG_PRINTDEC((int)va); rLocation.DUMP(" rLocation");
   setDrawColor(c);
   if(pFont != 0) {
-    g_display.setFont(pFont);
+    /*g_display.*/setFont(pFont);
   }
   if(rLocation.bottom == 0)
-    rLocation.bottom = rLocation.top + g_display.getFontHeight();
+    rLocation.bottom = rLocation.top + /*g_display.*/getFontHeight();
   
   //RECT rOldClip = getClipRect();  
   //RECT rClip = rOldClip.intersect(rLocation); 
@@ -90,8 +98,8 @@ void Display::printText(
     
   if((szText != 0) && (szText[0] != '\0'))
   {
-    int16_t dx = rLocation.width() - g_display.getStrWidth(szText);
-    int16_t dy = rLocation.height() - g_display.getFontHeight();
+    int16_t dx = rLocation.width() - /*g_display.*/getStrWidth(szText);
+    int16_t dy = rLocation.height() - /*g_display.*/getFontHeight();
     
     RECT rFill = rLocation;
     switch(ha) {
@@ -109,7 +117,7 @@ void Display::printText(
       fillRect(rFill, bg);
     
     rFill.left = rFill.right;
-    rFill.right += g_display.getStrWidth(szText);
+    rFill.right += /*g_display.*/getStrWidth(szText);
     switch(va) {
       case vaTop:
         setCursor(rFill.left, rFill.top);
@@ -181,6 +189,7 @@ void Display::DUMP(const char *szText /* = 0*/) const
   
   //uint16_t textcolor, textbgcolor;
   //uint8_t textsize, rotation;  
+  DEBUG_PRINTLN("");
 }
 #endif
 

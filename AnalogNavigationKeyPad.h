@@ -22,18 +22,20 @@ const uint8_t VK_SEL   = 16;
 const uint8_t VK_SOFTA = 32;
 const uint8_t VK_SOFTB = 64;
 
+/** delay in ms to debounce */
+const int s_iKeypadDebounceDelay = 50;
+/** delay in ms before the long key is fired */
+const int s_iKeypadLongKeyDelay = 3000;
+/** delay in ms to autorepeat */
+const int s_iKeypadAutoRepeatDelay = 500;
+/** inactivity timeout in milliseconds */
+const unsigned long s_ulKeypadInactivityDelay = 10000;
+
 class AnalogNavigationKeypad;
 
 /** Low level class important for implementation only - ignore it but do not modify it. */
 class KeypadChannel
 {
-  /** delay in ms to debounce */
-  const int s_iDebounceDelay = 50;
-  /** delay in ms to autorepeat */
-  const int s_iAutoRepeatDelay = 500;
-  /** delay in ms before the long key is fired */
-  const int s_iLongKeyDelay = 3000;
-
 public:
   KeypadChannel(){}
 
@@ -41,10 +43,11 @@ public:
   uint8_t m_bPin = 0;
   /** when to fire long key */
   unsigned long m_ulToFireLongKey = 0;
-  /** when to fire key auto repeat */
-  unsigned long m_ulToFireAutoRepeat = 0;
   /** when bouncing subsides */
   unsigned long m_ulBounceSubsided = 0;
+  /** when to fire key auto repeat */
+  unsigned long m_ulToFireAutoRepeat = 0;
+  
   /** 
    *  an array of scan codes to generate when one of keys is pressed 
    *  e.g. [Up, Down]
@@ -61,6 +64,13 @@ public:
   uint8_t m_bOldKey = VK_NONE;
 
   bool getAndDispatchKey(unsigned long ulNow, AnalogNavigationKeypad *p, uint8_t uKeyOtherChannel);
+
+  /** reset when to fire autorepeat */
+  void resetToFireAutoRepeat()
+  {
+    m_ulToFireAutoRepeat = 0;
+  }
+  
 
 protected:
   /** get one of VK_xxx */
@@ -82,6 +92,9 @@ protected:
  */
 class AnalogNavigationKeypad
 {
+  /** when to fire key auto repeat */
+  unsigned long m_ulToFireAutoRepeat = 0;
+  
 public:
   /** keypad is connected to thees analog input pins */
   AnalogNavigationKeypad(uint8_t bPin1, uint8_t bPin2);
@@ -116,8 +129,11 @@ public:
    */
   void onUserActivity(unsigned long ulNow) 
   {
-    m_ulToFireInactivity = ulNow + s_ulInactivityDelay;
+    m_ulToFireInactivity = ulNow + s_ulKeypadInactivityDelay;
   }
+
+  /** not for end-user! User by a channel */
+  bool envokeOnKeyAutoRepeat(unsigned long ulNow, uint8_t vks);
   
 protected:
   /** get readable names of the keyes pressed */
@@ -125,8 +141,6 @@ protected:
 
   /** when inactivity timeout will happen */
   unsigned long m_ulToFireInactivity = 0;
-  /** inactivity timeout in milliseconds */
-  const unsigned long s_ulInactivityDelay = 10000;
   
   /** to ensure that multiple keys can be read at the same time... */
   KeypadChannel m_ch[2];

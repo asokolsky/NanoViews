@@ -12,7 +12,7 @@
 //
 
 Led g_led(pinLed);
-
+Display g_display(addressI2Cdisplay);
 
 class MyNavKeyPad: public AnalogNavigationKeypad
 {
@@ -69,12 +69,15 @@ void setup()
   //while(!Serial)  ; // wait for serial port to connect. Needed for Leonardo only
   DEBUG_PRINTLN("Simple NanoViews Test!");
     
-  View::setup();
+  View::setup(&g_display);
+  delay(1000); 
   View::activate(&g_viewLed);
 }
 
 void loop() 
 {
+  delay(1000);   
+  
   unsigned long ulNow = millis();
 
   bool bUpdateDisplay = false;

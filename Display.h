@@ -2,7 +2,8 @@
 #define Display_h
 
 /**
- *  Basic definitions
+ * U8G2 derivative
+ * Provides a display object to be used by all the viewes
  */
  
  class POINT
@@ -75,11 +76,11 @@ public:
   const static uint8_t COLOR_RED      = 3;
   const static uint8_t COLOR_CYAN     = 4;
   
-  Display() : U8G2_SH1106_128X64_NONAME_1_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE)
+  Display(uint8_t adr) : U8G2_SH1106_128X64_NONAME_1_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE)
     //U8G2_SH1106_128X64_NONAME_F_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE)
     //U8G2_SSD1306_128X64_NONAME_F_HW_I2C(U8G2_R0, /* reset=*/ U8X8_PIN_NONE)
     {
-      
+      setI2CAddress(adr);
     }  
 
   /*void setClipRect(const RECT r) {
@@ -139,13 +140,7 @@ public:
   /**
   * Called once to set things up.
   */
-  void setup()
-  {
-    begin();
-    //fillScreen(ILI9341_BLACK);
-    //setRotation(uDisplayOrientation); // for PCB v0.9 and later
-    //setTextWrap(false);
-  }
+  void setup();
 
   //const int16_t iButtonCornerRadius = 4;
   //const uint16_t uButtonBorderColor = ILI9341_DARKGREY;
@@ -172,6 +167,6 @@ public:
 #endif
 };
 
-extern Display g_display;
+//extern Display g_display;
 
 #endif // Display_h

@@ -12,4 +12,4 @@ const uint8_t pinKeyPad2 = A1;
 /** display is on I2C which are these pins */
 const uint8_t pinI2C_SDA = A4;
 const uint8_t pinI2C_SCL = A5;
-
+const uint8_t addressI2Cdisplay = 0x78;
