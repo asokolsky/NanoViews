@@ -1,6 +1,6 @@
 #include "NanoViews.h"
 
-static Display *g_pDisplay;
+static Display *g_pDisplay = 0;
 
 /**
  *  Widget Class Implementation
@@ -8,12 +8,15 @@ static Display *g_pDisplay;
 void Widget::draw() 
 {
   // just to make sure we overwrite this....
+  if(g_pDisplay == 0)
+    return;
   g_pDisplay->fillRect(m_position, Display::COLOR_RED);
   g_pDisplay->fillRect(m_rectClient, Display::COLOR_CYAN);
 }
 
 void Widget::setPosition(const RECT rLoc)
 {
+  DUMP("Widget::setPosition()"); rLoc.DUMP(" rLoc: "); 
   //if((left == m_position.left) && (m_position.top == top) && (m_position.right == right) && (m_position.bottom == bottom)) return;
   m_position = rLoc;
   onPosition();
@@ -25,9 +28,9 @@ void Widget::DUMP(const char *szText /*= 0*/) const
   if(szText != 0) {
     DEBUG_PRNT(szText);
   }
-  DEBUG_PRINT(" Widget@"); DEBUG_PRINTDEC((int)this); 
+  DEBUG_PRINT(" Widget@"); DEBUG_PRINTHEX((int)this); DEBUG_PRINT(" m_uStyle="); DEBUG_PRINTHEX(m_uStyle); 
   m_position.DUMP(" m_position: ");
-  m_rectClient.DUMP("m_rectClient: ");  
+  m_rectClient.DUMP(" m_rectClient: ");  
 }
 #endif
  
@@ -54,6 +57,9 @@ void Widget::printKeyVal(
   bool bSelected, 
   const char *szKey2, long lVal2)
 {
+  if(g_pDisplay == 0)
+    return;
+
   char szText[80];
 
   RECT rLocation;
@@ -104,26 +110,19 @@ void Widget::printKeyVal(
 */
 void TextWidget::draw()
 {
-  DEBUG_PRINT("TextWidget::draw: '"); DEBUG_PRNT(m_text); DEBUG_PRINTLN("'");
-  m_position.DUMP("TextWidget m_position: ");
-  m_rectClient.DUMP("TextWidget m_rectClient: ");
-
+  DUMP("TextWidget::draw()");
+  if(g_pDisplay == 0)
+    return;
   g_pDisplay->printText(
-    m_text, Display::COLOR_WHITE, Display::COLOR_BLACK, 
+    m_szText, Display::COLOR_WHITE, Display::COLOR_BLACK, 
     m_rectClient, Display::haCenter, Display::vaCenter);
-  
 }
 
 #ifdef DEBUG
 void TextWidget::DUMP(const char *szText /*= 0*/) const
 {
-  if(szText != 0) {
-    DEBUG_PRNT(szText);
-  }
-  DEBUG_PRINT(" TextWidget@"); DEBUG_PRINTDEC((int)this); 
-  m_position.DUMP(" m_position: ");
-  m_rectClient.DUMP("m_rectClient: ");  
-  DEBUG_PRINT(" m_text='"); DEBUG_PRNT(m_text); DEBUG_PRINTLN("'");
+  Widget::DUMP(szText);
+  DEBUG_PRINT(" TextWidget@"); DEBUG_PRINTHEX((int)this); DEBUG_PRINT(" m_szText='"); DEBUG_PRNT(m_szText); DEBUG_PRINTLN("'");
 }
 #endif
  
@@ -144,16 +143,19 @@ const int16_t iTitleBarHeight = 30; // 27;
 /**
  * Class View
  */
-View::View(const char *szTitle) :
-  m_szTitle(szTitle)
+View::View(const char *szTitle) : 
+  TextWidget(0)
 {
-  for(uint8_t i = 0; i < MAXKIDS; i++)
+  setText(szTitle);
+  m_uStyle |= WS_TITLEBAR;
+  
+  for(uint8_t i = 0; i < (sizeof(m_zChildren)/sizeof(m_zChildren[0])); i++)
     m_zChildren[i] = 0;
 
   m_position.top = 0;
   m_position.left = 0;
-  m_position.bottom = g_pDisplay->getDisplayWidth(); // the order is important! 
-  m_position.right = g_pDisplay->getDisplayHeight();
+  m_position.bottom = (g_pDisplay == 0) ? 0 : g_pDisplay->getDisplayWidth(); // the order is important! 
+  m_position.right = (g_pDisplay == 0) ? 0 : g_pDisplay->getDisplayHeight();
   setPosition(m_position);  
 }
 
@@ -175,10 +177,13 @@ boolean View::loop(unsigned long now)
   return false;
 }
 
+/** 
+ * Static member to activate view p calling the notifiers 
+ */
 void View::activate(View *p) 
 {
-  DEBUG_PRINTLN("View::activate()");   
-  delay(1000); 
+  DEBUG_PRINTLN("View::activate()");
+  //delay(1000); 
   p->DUMP("About to activate: ");  
   if(g_pActiveView != 0)
   {
@@ -198,12 +203,13 @@ void View::activate(View *p)
 
 void View::onDeActivate(View *pNewActive)
 {
-  DEBUG_PRINTLN("View::onDeActivate");
+  DUMP("View::onDeActivate");
 }
 
 void View::onActivate(View *pPrevActive)
 {
-  DEBUG_PRINTLN("View::onActivate");
+  DUMP("View::onActivate");
+  assert(g_pDisplay != 0);
   //g_pDisplay->resetClipRect();
   RECT rPos;
   rPos.top = 0;
@@ -236,7 +242,7 @@ void View::onPosition()
   m_rectClient.top += iTitleBarHeight;
   //m_rectClient.bottom -= iBottomBarHeight;
   if((m_zChildren[0] != 0) && (m_zChildren[1] == 0))
-    m_zChildren[1]->setPosition(m_rectClient);
+    m_zChildren[0]->setPosition(m_rectClient);
 }
 
 /** 
@@ -287,7 +293,7 @@ void View::updateClient(unsigned long now)
   // entire background erase - does the job but blinks!
   // m_lcd.fillRect(m_rectClient, ILI9341_BLUE);
   // redraw children!
-  for(uint8_t i = 0; i < MAXKIDS; i++)
+  for(uint8_t i = 0; i < (sizeof(m_zChildren)/sizeof(m_zChildren[0])); i++)
     if(m_zChildren[i] != 0)
       m_zChildren[i]->draw();
 }
@@ -297,13 +303,13 @@ void View::updateClient(unsigned long now)
  */
 void View::drawTitleBar()
 {
-  // DEBUG_PRINT("View::drawTitleBar("); DEBUG_PRINT(m_szTitle);  DEBUG_PRINTLN(")");
+  // DEBUG_PRINT("View::drawTitleBar("); DEBUG_PRINT(m_szText);  DEBUG_PRINTLN(")");
   RECT r;
   r.top = m_position.top + 2;
   r.bottom = 0;
   r.left = m_position.left + 2;
   r.right = m_position.right;
-  g_pDisplay->printText(m_szTitle, 1/*ILI9341_YELLOW*/, 0/*ILI9341_BLACK*/, r, Display::haLeft, Display::vaTop); // , &LiberationSans_18);
+  g_pDisplay->printText(m_szText, 1/*ILI9341_YELLOW*/, 0/*ILI9341_BLACK*/, r, Display::haLeft, Display::vaTop); // , &LiberationSans_18);
 }
 
 /** dummy defaults, children to overwrite */
@@ -332,8 +338,8 @@ bool View::onKeysInactive()
 #ifdef DEBUG
 void View::DUMP(const char *szText /*= 0*/) const
 {
-  //Widget::DUMP(szText);
-  DEBUG_PRINT("View@"); DEBUG_PRINTDEC((int)this); DEBUG_PRINT(" m_szTitle="); DEBUG_PRNTLN(m_szTitle); 
+  TextWidget::DUMP(szText);
+  DEBUG_PRINT("View@"); DEBUG_PRINTHEX((int)this); DEBUG_PRINTLN(""); 
 }
 #endif
 

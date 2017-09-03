@@ -32,7 +32,7 @@ void RECT::DUMP(const char *szText /* = 0*/) const
   if(szText != 0) {
     DEBUG_PRNT(szText);
   }
-  DEBUG_PRINT(" RECT@"); DEBUG_PRINTDEC((int)this); 
+  DEBUG_PRINT(" RECT@"); DEBUG_PRINTHEX((int)this); 
   DEBUG_PRINT(" l="); DEBUG_PRINTDEC((int)left);
   DEBUG_PRINT(" r="); DEBUG_PRINTDEC((int)right);
   DEBUG_PRINT(" t="); DEBUG_PRINTDEC((int)top);
@@ -169,7 +169,7 @@ void Display::DUMP(const char *szText /* = 0*/) const
   if(szText != 0) {
     DEBUG_PRNT(szText);
   }
-  DEBUG_PRINT(" Display@"); DEBUG_PRINTDEC((int)this); DEBUG_PRINT(" _width="); DEBUG_PRINTDEC(getDisplayWidth()); DEBUG_PRINT(" _height="); DEBUG_PRINTDEC(getDisplayHeight()); 
+  DEBUG_PRINT(" Display@"); DEBUG_PRINTHEX((int)this); DEBUG_PRINT(" _width="); DEBUG_PRINTDEC(getDisplayWidth()); DEBUG_PRINT(" _height="); DEBUG_PRINTDEC(getDisplayHeight()); 
   
   //int16_t  cursor_x, cursor_y;
   /*RECT r;

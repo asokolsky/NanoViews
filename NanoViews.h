@@ -14,6 +14,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <U8g2lib.h>
+#include <assert.h>
 
 #include "Trace.h"
 #include "Display.h"
@@ -112,23 +113,20 @@
   */
 class TextWidget : public Widget
 {
-  char m_text[40];
 public:
-
   TextWidget(const uint8_t *pFont = 0) : 
     Widget(pFont) 
   {
     m_uStyle |= WS_CHILD;
-    m_text[0] = '\0';
+    m_szText[0] = '\0';
   }
-
-  void setText(const char *msg) 
+  /** Set window title */
+  void setText(const char *msg)
   {
-    strncpy(m_text, m_text, sizeof(m_text));
-    m_text[sizeof(m_text) - 1] = '\0';
+    strncpy(m_szText, msg, sizeof(m_szText));
+    m_szText[sizeof(m_szText) - 1] = '\0';
   }
-  
-  /** Text is painted centered */
+  /** By default text is painted centered */
   void draw();
 
 #ifdef DEBUG
@@ -136,13 +134,15 @@ public:
 #else
   void DUMP(const char *szText = 0) {}
 #endif  
+protected:
+  char m_szText[40];
 };
  
 /**
  * View is a widget with a title and bottom bar.  
  * Kinda like Application or Top Level window in Windows.
  */
-class View : public Widget
+class View : public TextWidget
 { 
 public:  
   View(const char *szTitle);
@@ -206,7 +206,6 @@ protected:
 
   
   bool m_bEraseBkgnd = true;
-  const char *m_szTitle;
 
   /**  update period 1/2 sec */
   static const unsigned long ulUpdatePeriod = 100;
@@ -223,7 +222,7 @@ protected:
   */
   View *m_zParent = 0;
   
-  const static uint8_t MAXKIDS = 4;
+  //const static uint8_t MAXKIDS = 4;
   
   Widget *m_zChildren[2];
 

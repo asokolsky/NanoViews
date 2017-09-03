@@ -9,8 +9,8 @@
  class POINT
  {
 public:  
-  int16_t x;
-  int16_t y;
+  int16_t x = 0;
+  int16_t y = 0;
 
   POINT() {}
   
@@ -26,10 +26,10 @@ public:
  public:
   RECT() {}
  
-  int16_t left;
-  int16_t top;
-  int16_t right;
-  int16_t bottom;
+  int16_t left = 0;
+  int16_t top = 0;
+  int16_t right = 0;
+  int16_t bottom = 0;
 
   int16_t width() const {
     return right - left;
